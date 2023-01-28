@@ -50,6 +50,7 @@ class InfraStack(Stack):
             self,
             "certificate",
             domain_name="*.jennproos.com",
+            subject_alternative_names=["jennproos.com"],
             certificate_name="Jenn Proos Website",
             validation=acm.CertificateValidation.from_dns(zone)
         )
@@ -57,9 +58,10 @@ class InfraStack(Stack):
         distribution = cloudfront.Distribution(
             self,
             "distribution",
-            domain_names=["*.jennproos.com"],
+            domain_names=["jennproos.com", "www.jennproos.com"],
             default_behavior=cloudfront.BehaviorOptions(
-                origin=origins.S3Origin(domain_bucket)
+                origin=origins.S3Origin(domain_bucket),
+                viewer_protocol_policy=cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS
             ),
             certificate=certificate
         )
@@ -67,6 +69,14 @@ class InfraStack(Stack):
         route53.ARecord(
             self,
             "a-record",
+            target=route53.RecordTarget.from_alias(route53_targets.CloudFrontTarget(distribution)),
+            zone=zone
+        )
+
+        route53.ARecord(
+            self,
+            "a-record-www",
+            record_name="www",
             target=route53.RecordTarget.from_alias(route53_targets.CloudFrontTarget(distribution)),
             zone=zone
         )
