@@ -1,6 +1,8 @@
 from aws_cdk import (
     Stack,
     aws_certificatemanager as acm,
+    aws_cloudfront as cloudfront,
+    aws_cloudfront_origins as origins,
     aws_route53 as route53,
     aws_route53_targets as route53_targets,
     aws_s3 as s3,
@@ -44,9 +46,27 @@ class InfraStack(Stack):
             domain_name="jennproos.com"
         )
 
+        certificate = acm.Certificate(
+            self,
+            "certificate",
+            domain_name="*.jennproos.com",
+            certificate_name="Jenn Proos Website",
+            validation=acm.CertificateValidation.from_dns(zone)
+        )
+
+        distribution = cloudfront.Distribution(
+            self,
+            "distribution",
+            domain_names=["*.jennproos.com"],
+            default_behavior=cloudfront.BehaviorOptions(
+                origin=origins.S3Origin(domain_bucket)
+            ),
+            certificate=certificate
+        )
+
         route53.ARecord(
             self,
             "a-record",
-            target=route53.RecordTarget.from_alias(route53_targets.BucketWebsiteTarget(domain_bucket)),
+            target=route53.RecordTarget.from_alias(route53_targets.CloudFrontTarget(distribution)),
             zone=zone
         )
