@@ -33,13 +33,6 @@ class InfraStack(Stack):
             )
         )
 
-        s3_deployment.BucketDeployment(
-            self,
-            "bucket-deployment",
-            sources=[s3_deployment.Source.asset("../personal-website/build")],
-            destination_bucket=domain_bucket
-        )
-
         zone = route53.HostedZone.from_lookup(
             self,
             "hosted-zone",
@@ -64,6 +57,15 @@ class InfraStack(Stack):
                 viewer_protocol_policy=cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS
             ),
             certificate=certificate
+        )
+
+        s3_deployment.BucketDeployment(
+            self,
+            "bucket-deployment",
+            sources=[s3_deployment.Source.asset("../personal-website/build")],
+            destination_bucket=domain_bucket,
+            distribution=distribution,
+            distribution_paths=["/"]
         )
 
         route53.ARecord(
