@@ -285,6 +285,9 @@ nav.navbar .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
 .banner img {
   animation: updown 3s linear infinite;
 }
+.banner a {
+  text-decoration: none;
+}
 @keyframes updown {
     0% {
         transform: translateY(-20px);
@@ -328,8 +331,11 @@ nav.navbar .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
   margin: 0 auto;
   position: relative;
 }
-.skill-slider .item img {
-  width: 50%;
+.skill-slider .item {
+  font-family: 'Centra', sans-serif;
+  font-weight: 500;
+}
+.skill-slider .item h5 {
   margin: 0 auto 15px auto;
 }
 .background-image-left {

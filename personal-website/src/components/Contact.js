@@ -80,7 +80,7 @@ export const Contact = () => {
                     {
                       status.message &&
                       <Col>
-                        <p className={status.success === false ? "danger" : "success"}>{status.message}</p>
+                        <p className={status.success == false ? "danger" : "success"}>{status.message}</p>
                       </Col>
                     }
                   </Row>
