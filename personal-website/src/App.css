@@ -327,13 +327,20 @@ nav.navbar .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
     margin: 14px 0 75px 0;
 }
 .skill-slider {
-  width: 80%;
+  width: 90%;
   margin: 0 auto;
   position: relative;
+}
+.skill-slider ul{
+  align-items: center;
 }
 .skill-slider .item {
   font-family: 'Centra', sans-serif;
   font-weight: 500;
+}
+.skill-slider .item img {
+  width: 50%;
+  padding-bottom: 20px;
 }
 .skill-slider .item h5 {
   margin: 0 auto 15px auto;
@@ -556,14 +563,20 @@ nav.navbar .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
   background: #FFFFFF;
   border-radius: 55px;
   color: #121212;
-  padding: 85px 125px;
+  padding: 50px 75px;
   margin-bottom: 80px;
-  margin-top: -122px;
+  margin-top: -125px;
 }
 .newsletter-bx h3 {
   font-weight: 700;
   letter-spacing: 0.5px;
   line-height: 1.2em;
+}
+.newsletter-bx .row {
+  align-items: center;
+}
+.newsletter-bx .row img {
+  width: 60%;
 }
 .new-email-bx {
   background: #fff;
