@@ -305,7 +305,7 @@ nav.navbar .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
 
 /************ Skills Css ************/
 .skill {
-  padding: 0 0 50px 0;
+  padding: 0 0 100px 0;
   position: relative;
 }
 .skill-bx {
@@ -351,6 +351,40 @@ nav.navbar .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
   bottom: 0;
   width: 40%;
   z-index: -4;
+}
+
+/************ Skills Css ************/
+.certification {
+  padding: 50px 0 100px 0;
+  position: relative;
+}
+.certification-bx {
+  background: #fffffc;
+  border-radius: 64px;
+  text-align: center;
+  padding: 60px 50px;
+  margin-top: -60px;
+}
+.certification h2 {
+  padding: 0 0 20px 0;
+	font-size: 45px;
+	font-weight: 700;
+  color: #000;
+}
+.certification-slider {
+  width: 90%;
+  margin: 0 auto;
+  position: relative;
+}
+.certification-slider ul{
+  align-items: center;
+}
+.certification-slider .item img {
+  width: 50%;
+  padding-bottom: 20px;
+}
+.certification-slider .item h5 {
+  margin: 0 auto 15px auto;
 }
 
 /************ Projects Css ************/
@@ -482,7 +516,7 @@ nav.navbar .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
 /************ Projects Css ************/
 .contact {
   background: linear-gradient(90.21deg, #AA367C -5.91%, #4A2FBD 111.58%);
-  padding: 60px 0 200px 0;
+  padding: 60px 0 60px 0;
 }
 .contact img {
   width: 92%;
@@ -553,7 +587,7 @@ nav.navbar .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
 
 /************ Footer Css ************/
 .footer {
-  padding: 0 0 50px 0;
+  padding: 25px 0 25px 0;
   background-image: url('./assets/img/footer-bg.png');
   background-position: center center;
   background-size: cover;
