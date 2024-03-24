@@ -47,6 +47,16 @@ export const Banner = () => {
     }
   }
 
+  const today = new Date();
+  const birthDateObj = new Date("1996-01-11");
+  
+  let age = today.getFullYear() - birthDateObj.getFullYear();
+  const monthDiff = today.getMonth() - birthDateObj.getMonth();
+  
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDateObj.getDate())) {
+    age--;
+  }
+
   return (
     <section className="banner" id="home">
       <Container>
@@ -57,7 +67,7 @@ export const Banner = () => {
               <div className={isVisible ? "animate__animated animate__fadeIn" : ""}>
                 <span className="tagline">Welcome to my World</span>
                 <h1>{`Hi! I'm Jenn`} <span className="txt-rotate" dataperiod="1000" data-rotate='[ "</Software Engineer/>", "</Nerd/>", "</Cat Mom/>" ]'><span className="wrap">{text}</span></span></h1>
-                <p>My name is Jenn Proos. I'm 27 years young and based in Grand Rapids, Michigan. I'm just a software engineer exploring the world that is web development!</p>
+                <p>My name is Jenn Proos. I'm {age} years young and based in Grand Rapids, Michigan. I'm just a software engineer exploring the world that is web development!</p>
                 <a href="#connect">
                   <button onClick={() => console.log('connect')}>Let’s Connect <ArrowRightCircle size={25} /></button>
                 </a>
