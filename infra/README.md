@@ -1,7 +1,8 @@
 
 # Welcome to your CDK Python project!
 
-This is a blank project for CDK development with Python.
+## Pre-deployment Step
+If changes to the website are made, `cd` into the `personal-website` folder and run `npm run build`. This will create a production build in the `personal-website/build` folder.
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
@@ -54,5 +55,3 @@ command.
  * `cdk deploy`      deploy this stack to your default AWS account/region
  * `cdk diff`        compare deployed stack with current state
  * `cdk docs`        open CDK documentation
-
-Enjoy!
