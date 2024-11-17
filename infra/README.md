@@ -2,8 +2,6 @@
 # Welcome to your CDK Python project!
 
 ## Pre-deployment Step
-If changes to the website are made, `cd` into the `personal-website` folder and run `npm run build`. This will create a production build in the `personal-website/build` folder.
-
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
 This project is set up like a standard Python project.  The initialization

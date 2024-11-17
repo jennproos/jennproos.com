@@ -1,4 +1,5 @@
 from aws_cdk import (
+    CfnOutput,
     Stack,
     aws_apigateway as apigateway,
     aws_certificatemanager as acm,
@@ -9,7 +10,7 @@ from aws_cdk import (
     aws_route53 as route53,
     aws_route53_targets as route53_targets,
     aws_s3 as s3,
-    aws_s3_deployment as s3_deployment,
+    aws_secretsmanager as secretsmanager,
     aws_ses as ses
 )
 from constructs import Construct
@@ -19,22 +20,44 @@ class InfraStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, stack_name="PersonalWebsiteInfraStack", **kwargs)
 
-        domain_bucket = s3.Bucket(
+        website_bucket = s3.Bucket(
             self,
-            "domain-bucket",
-            bucket_name="jennproos.com",
+            "website-bucket",
+            bucket_name="www.jennproos.com",
             public_read_access=True,
             website_index_document="index.html"
         )
 
-        s3.Bucket(
+        github_deployment_user = iam.User(
             self,
-            "subdomain-bucket",
-            bucket_name="www.jennproos.com",
-            website_redirect=s3.RedirectTarget(
-                host_name=domain_bucket.bucket_name,
-                protocol=s3.RedirectProtocol.HTTP
+            "github-deployment-user",
+            user_name="github-deployment-user"
+        )
+
+        github_deployment_user.add_to_policy(
+            iam.PolicyStatement(
+                actions=[
+                    "s3:ListBucket",
+                    "s3:GetObject",
+                    "s3:PutObject",
+                    "s3:DeleteObject",
+                    "s3:PutBucketWebsite"
+                ],
+                resources=[
+                    website_bucket.bucket_arn,
+                    f"{website_bucket.bucket_arn}/*"
+                ]
             )
+        )
+
+        access_key = iam.AccessKey(self, "github-deployment-user-secret-access-key", user=github_deployment_user)
+        CfnOutput(self, "github-deployment-user-access-key-id", value=access_key.access_key_id)
+
+        secretsmanager.Secret(
+            self,
+            "github-deployment-user-secret-access-key-secret",
+            secret_name="github-deployment-user-secret-access-key-secret",
+            secret_string_value=access_key.secret_access_key
         )
 
         zone = route53.HostedZone.from_lookup(
@@ -55,35 +78,27 @@ class InfraStack(Stack):
         distribution = cloudfront.Distribution(
             self,
             "distribution",
-            domain_names=["jennproos.com", "www.jennproos.com"],
+            domain_names=["www.jennproos.com"],
             default_behavior=cloudfront.BehaviorOptions(
-                origin=origins.S3Origin(domain_bucket),
+                origin=origins.S3Origin(website_bucket),
                 viewer_protocol_policy=cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS
             ),
             certificate=certificate
         )
 
-        s3_deployment.BucketDeployment(
-            self,
-            "bucket-deployment",
-            sources=[s3_deployment.Source.asset("../personal-website/build")],
-            destination_bucket=domain_bucket,
-            distribution=distribution,
-            distribution_paths=["/"]
-        )
-
-        route53.ARecord(
-            self,
-            "a-record",
-            target=route53.RecordTarget.from_alias(route53_targets.CloudFrontTarget(distribution)),
-            zone=zone
-        )
-
-        route53.ARecord(
+        www_record = route53.ARecord(
             self,
             "a-record-www",
             record_name="www",
             target=route53.RecordTarget.from_alias(route53_targets.CloudFrontTarget(distribution)),
+            zone=zone
+        )
+
+        # TODO: Route this to www record
+        route53.ARecord(
+            self,
+            "a-record",
+            target=route53.RecordTarget.from_alias(route53_targets.Route53RecordTarget(www_record)),
             zone=zone
         )
 
