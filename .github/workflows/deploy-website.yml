@@ -1,0 +1,43 @@
+name: Deploy and Deploy to S3
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'personal-websites/**'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: personal-website
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 23
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the React app
+        run: npm run build
+
+      - name: Deploy to S3
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          AWS_REGION: 'us-east-1'
+          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+          BUILD_DIR: 'build'
+        run: |
+          aws s3 sync $BUILD_DIR s3://$S3_BUCKET_NAME --delete
+          aws s3 website s3://$S3_BUCKET_NAME --index-document index.html --error-document index.html
+
