@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'personal-websites/**'
+      - 'personal-website/**'
   workflow_dispatch:
 
 jobs:
