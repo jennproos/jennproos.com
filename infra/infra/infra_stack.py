@@ -1,5 +1,6 @@
 from aws_cdk import (
     CfnOutput,
+    RemovalPolicy,
     Stack,
     aws_apigateway as apigateway,
     aws_certificatemanager as acm,
@@ -20,99 +21,78 @@ class InfraStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, stack_name="PersonalWebsiteInfraStack", **kwargs)
 
-        website_bucket = s3.Bucket(
+        domain_name = "jennproos.com"
+        subdomain = f"www.{domain_name}"
+
+        domain_bucket = s3.Bucket(
             self,
-            "website-bucket",
-            bucket_name="www.jennproos.com",
+            "DomainBucket",
+            bucket_name=domain_name,
             public_read_access=True,
+            block_public_access=s3.BlockPublicAccess(
+                block_public_acls=False,
+                block_public_policy=False,
+                ignore_public_acls=False,
+                restrict_public_buckets=False
+            ),
+            removal_policy=RemovalPolicy.DESTROY,
             website_index_document="index.html"
         )
 
-        github_deployment_user = iam.User(
+        hosted_zone = route53.HostedZone.from_lookup(
             self,
-            "github-deployment-user",
-            user_name="github-deployment-user"
-        )
-
-        github_deployment_user.add_to_policy(
-            iam.PolicyStatement(
-                actions=[
-                    "s3:ListBucket",
-                    "s3:GetObject",
-                    "s3:PutObject",
-                    "s3:DeleteObject",
-                    "s3:PutBucketWebsite"
-                ],
-                resources=[
-                    website_bucket.bucket_arn,
-                    f"{website_bucket.bucket_arn}/*"
-                ]
-            )
-        )
-
-        access_key = iam.AccessKey(self, "github-deployment-user-secret-access-key", user=github_deployment_user)
-        CfnOutput(self, "github-deployment-user-access-key-id", value=access_key.access_key_id)
-
-        secretsmanager.Secret(
-            self,
-            "github-deployment-user-secret-access-key-secret",
-            secret_name="github-deployment-user-secret-access-key-secret",
-            secret_string_value=access_key.secret_access_key
-        )
-
-        zone = route53.HostedZone.from_lookup(
-            self,
-            "hosted-zone",
-            domain_name="jennproos.com"
+            "HostedZone",
+            domain_name=domain_name
         )
 
         certificate = acm.Certificate(
             self,
-            "certificate",
-            domain_name="*.jennproos.com",
-            subject_alternative_names=["jennproos.com"],
-            certificate_name="Jenn Proos Website",
-            validation=acm.CertificateValidation.from_dns(zone)
+            "WebsiteCertificate",
+            domain_name=domain_name,
+            certificate_name="Personal Website Certificate",
+            subject_alternative_names=[subdomain],
+            validation=acm.CertificateValidation.from_dns(hosted_zone)
         )
 
         distribution = cloudfront.Distribution(
             self,
-            "distribution",
-            domain_names=["www.jennproos.com"],
+            "SiteDistribution",
+            certificate=certificate,
+            default_root_object="index.html",
+            domain_names=[domain_name, subdomain],
             default_behavior=cloudfront.BehaviorOptions(
-                origin=origins.S3Origin(website_bucket),
+                origin=origins.S3Origin(domain_bucket),
+                allowed_methods=cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
                 viewer_protocol_policy=cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS
-            ),
-            certificate=certificate
+            )
         )
 
-        www_record = route53.ARecord(
-            self,
-            "a-record-www",
-            record_name="www",
-            target=route53.RecordTarget.from_alias(route53_targets.CloudFrontTarget(distribution)),
-            zone=zone
-        )
-
-        # TODO: Route this to www record
         route53.ARecord(
             self,
-            "a-record",
-            target=route53.RecordTarget.from_alias(route53_targets.Route53RecordTarget(www_record)),
-            zone=zone
+            "SiteAliasRecord",
+            zone=hosted_zone,
+            target=route53.RecordTarget.from_alias(route53_targets.CloudFrontTarget(distribution))
+        )
+
+        route53.ARecord(
+            self,
+            "WWWSiteAliasRecord",
+            zone=hosted_zone,
+            record_name=subdomain,
+            target=route53.RecordTarget.from_alias(route53_targets.CloudFrontTarget(distribution))
         )
 
         my_email = "jennproos@gmail.com"
 
         ses.EmailIdentity(
             self,
-            "email-identity",
+            "EmailIdentity",
             identity=ses.Identity.email(my_email)
         )
 
         contact_me_api = apigateway.RestApi(
             self,
-            "contact-me-api",
+            "ContactMeApi",
             rest_api_name="Contact Me Service",
             description="This service will send e-mails to me from the contact form",
             default_cors_preflight_options=apigateway.CorsOptions(
@@ -123,7 +103,7 @@ class InfraStack(Stack):
 
         handler = lambda_.Function(
             self,
-            "send-email-function",
+            "SendEmailFunction",
             function_name="send-email-function",
             runtime=lambda_.Runtime.PYTHON_3_9,
             code=lambda_.Code.from_asset("resources"),
@@ -150,3 +130,36 @@ class InfraStack(Stack):
         )
 
         contact_me_api.root.add_method("POST", send_email_integration)
+
+        github_deployment_user = iam.User(
+            self,
+            "GitHubDeploymentUser",
+            user_name="github-deployment-user"
+        )
+
+        github_deployment_user.add_to_policy(
+            iam.PolicyStatement(
+                actions=[
+                    "s3:ListBucket",
+                    "s3:GetObject",
+                    "s3:PutObject",
+                    "s3:DeleteObject",
+                    "s3:PutBucketWebsite"
+                ],
+                resources=[
+                    domain_bucket.bucket_arn,
+                    f"{domain_bucket.bucket_arn}/*"
+                ]
+            )
+        )
+
+        access_key = iam.AccessKey(self, "GitHubDeploymentUserAccessKey", user=github_deployment_user)
+        CfnOutput(self, "GitHubDeploymentUserAccessKeyId", value=access_key.access_key_id)
+
+        secretsmanager.Secret(
+            self,
+            "GitHubDeploymentUserAccessKeySecret",
+            secret_name="github-deployment-user-secret-access-key-secret",
+            secret_string_value=access_key.secret_access_key
+        )
+
