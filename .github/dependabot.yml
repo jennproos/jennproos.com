@@ -1,0 +1,45 @@
+# Dependabot configuration for automatic dependency updates
+# Documentation: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  # Monitor GitHub Actions for updates
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+      time: "09:00"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    open-pull-requests-limit: 5
+
+  # Monitor Python dependencies in infra directory
+  - package-ecosystem: "pip"
+    directory: "/infra"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+      time: "09:00"
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps-dev"
+      include: "scope"
+    # Group AWS CDK related packages together
+    groups:
+      aws-cdk:
+        patterns:
+          - "aws-cdk*"
+          - "constructs"
+      test-dependencies:
+        patterns:
+          - "pytest*"
+    # Allow both direct and indirect dependency updates
+    allow:
+      - dependency-type: "direct"
+      - dependency-type: "indirect"
+    open-pull-requests-limit: 5
+    # Run tests before opening PR (if tests are configured in CI)
+    reviewers:
+      - "jennproos"
