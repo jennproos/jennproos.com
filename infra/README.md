@@ -46,6 +46,49 @@ To add additional dependencies, for example other CDK libraries, just add
 them to your `setup.py` file and rerun the `pip install -r requirements.txt`
 command.
 
+## Testing
+
+This project includes comprehensive infrastructure tests to validate the CDK stack configuration.
+
+### Running Tests
+
+The easiest way to run tests is using the provided script:
+
+```bash
+./run-tests.sh
+```
+
+This script will:
+- Create a virtual environment if it doesn't exist
+- Install dependencies automatically
+- Run all infrastructure tests
+
+You can also pass pytest arguments to the script:
+
+```bash
+./run-tests.sh -k test_s3_bucket_created    # Run specific test
+./run-tests.sh -v                            # Verbose output
+./run-tests.sh --tb=short                    # Short traceback format
+```
+
+### Manual Test Execution
+
+If you prefer to run tests manually:
+
+```bash
+source .venv/bin/activate
+python -m pytest tests/unit/test_infra_stack.py -v
+```
+
+### Test Coverage
+
+The test suite validates:
+- S3 bucket configuration (public access, website hosting)
+- CloudFront distribution (HTTPS redirect, domain aliases)
+- ACM certificate (domain names, validation)
+- Route 53 A records (root and www domains)
+- Resource counts and removal policies
+
 ## Useful commands
 
  * `cdk ls`          list all stacks in the app
