@@ -105,7 +105,7 @@ class InfraStack(Stack):
             self,
             "SendEmailFunction",
             function_name="send-email-function",
-            runtime=lambda_.Runtime.PYTHON_3_9,
+            runtime=lambda_.Runtime.PYTHON_3_13,
             code=lambda_.Code.from_asset("resources"),
             handler="send_email.handler",
             environment={
