@@ -61,7 +61,7 @@ class InfraStack(Stack):
             default_root_object="index.html",
             domain_names=[domain_name, subdomain],
             default_behavior=cloudfront.BehaviorOptions(
-                origin=origins.S3Origin(domain_bucket),
+                origin=origins.S3StaticWebsiteOrigin(domain_bucket),
                 allowed_methods=cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
                 viewer_protocol_policy=cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS
             )
