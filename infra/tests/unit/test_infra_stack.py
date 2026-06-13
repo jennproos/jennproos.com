@@ -17,7 +17,7 @@ def test_s3_bucket_created():
 
     # Verify S3 bucket exists with correct properties
     template.has_resource_properties("AWS::S3::Bucket", {
-        "BucketName": "jennproos.com",
+        "BucketName": "jennrandall.dev",
         "PublicAccessBlockConfiguration": {
             "BlockPublicAcls": False,
             "BlockPublicPolicy": False,
@@ -40,7 +40,7 @@ def test_cloudfront_distribution_created():
     template.has_resource_properties("AWS::CloudFront::Distribution", {
         "DistributionConfig": {
             "DefaultRootObject": "index.html",
-            "Aliases": ["jennproos.com", "www.jennproos.com"],
+            "Aliases": ["jennrandall.dev", "www.jennrandall.dev"],
             "ViewerCertificate": {
                 "AcmCertificateArn": assertions.Match.any_value(),
                 "SslSupportMethod": "sni-only"
@@ -61,8 +61,8 @@ def test_acm_certificate_created():
 
     # Verify certificate exists with correct domains
     template.has_resource_properties("AWS::CertificateManager::Certificate", {
-        "DomainName": "jennproos.com",
-        "SubjectAlternativeNames": ["www.jennproos.com"],
+        "DomainName": "jennrandall.dev",
+        "SubjectAlternativeNames": ["www.jennrandall.dev"],
         "DomainValidationOptions": assertions.Match.any_value()
     })
 
@@ -144,7 +144,7 @@ def test_lambda_function_created():
         "Handler": "send_email.handler",
         "Environment": {
             "Variables": {
-                "MY_EMAIL": "jennproos@gmail.com"
+                "MY_EMAIL": "jennrandall4855@gmail.com"
             }
         }
     })
@@ -280,7 +280,7 @@ def test_ses_email_identity_created():
 
     # Verify SES email identity exists
     template.has_resource_properties("AWS::SES::EmailIdentity", {
-        "EmailIdentity": "jennproos@gmail.com"
+        "EmailIdentity": "jennrandall4855@gmail.com"
     })
 
 

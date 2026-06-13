@@ -1,7 +1,7 @@
 {
-  "name": "jennproos-infra",
+  "name": "jennrandall-infra",
   "version": "1.0.0",
-  "description": "AWS CDK infrastructure for jennproos.com",
+  "description": "AWS CDK infrastructure for jennrandall.dev",
   "scripts": {
     "cdk": "cdk"
   },

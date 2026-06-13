@@ -1,8 +1,8 @@
-# jennproos.com
+# jennrandall.com
 
 My personal website showcasing my work, experience, and providing a way to get in touch.
 
-**Live Site:** [jennproos.com](https://jennproos.com/)
+**Live Site:** [jennrandall.dev](https://jennrandall.dev/)
 
 ## Repository Overview
 
@@ -11,7 +11,7 @@ This repository contains the complete website infrastructure and deployment pipe
 ## Repository Structure
 
 ```
-jennproos.com/
+jennrandall.dev/
 ├── web/              # React front-end application
 ├── infra/            # AWS CDK infrastructure code
 └── .github/          # GitHub Actions workflows
@@ -70,7 +70,7 @@ cd infra
 1. Push changes to the `web/` directory
 2. GitHub Actions automatically deploys to S3
 3. CloudFront serves the updated content globally
-4. Changes are live at jennproos.com
+4. Changes are live at jennrandall.dev
 
 ## Getting Started
 
@@ -98,7 +98,7 @@ Simply edit files in the `web/` directory and push to the `main` branch. The Git
 For manual deployment:
 ```bash
 cd web
-aws s3 sync . s3://jennproos.com --delete
+aws s3 sync . s3://jennrandall.dev --delete
 ```
 
 ## Architecture
@@ -176,5 +176,5 @@ Dependabot configuration: `.github/dependabot.yml`
 
 ## Links
 
-- Website: [jennproos.com](https://jennproos.com/)
-- Email: jennproos@gmail.com
+- Website: [jennrandall.dev](https://jennrandall.dev/)
+- Email: jennrandall4855@gmail.com

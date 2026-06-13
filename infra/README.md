@@ -6,11 +6,21 @@
 Before getting started, ensure you have the following installed:
 - **Python 3.13+**
 - **Node.js and npm** (for AWS CDK CLI)
-- **AWS CLI** configured with appropriate credentials
+- **AWS CLI** configured with appropriate credentials (SSO login required before running CDK commands)
 
 ## Setup Instructions
 
-### 1. Install AWS CDK CLI
+### 1. Authenticate with AWS
+
+CDK runs on Node.js and requires temporary credentials to be exported as environment variables — SSO login alone is not enough for CDK to pick them up. Run the provided auth script at the start of each session:
+
+```bash
+source ./auth.sh
+```
+
+These credentials expire after a few hours, so re-run this whenever you start a new session.
+
+### 2. Install AWS CDK CLI
 
 The AWS CDK CLI is a Node.js package. Install it locally in the project:
 
@@ -33,7 +43,7 @@ $ npx cdk deploy       # Deploy the stack
 $ alias cdk="npx cdk"
 ```
 
-### 2. Set Up Python Virtual Environment
+### 3. Set Up Python Virtual Environment
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
@@ -69,7 +79,7 @@ Once the virtualenv is activated, you can install the required dependencies.
 $ pip install -r requirements.txt
 ```
 
-### 3. Synthesize CloudFormation Template
+### 4. Synthesize CloudFormation Template
 
 At this point you can now synthesize the CloudFormation template for this code.
 

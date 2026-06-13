@@ -29,7 +29,7 @@ def handler(event, context):
         response = ses_client.send_email(
             Source=my_email,
             Destination={
-                "ToAddresses": ["jennproos@gmail.com"]
+                "ToAddresses": ["jennrandall4855@gmail.com"]
             },
             Message={
                 "Subject": {

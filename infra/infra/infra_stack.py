@@ -21,7 +21,7 @@ class InfraStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, stack_name="PersonalWebsiteInfraStack", **kwargs)
 
-        domain_name = "jennproos.com"
+        domain_name = "jennrandall.dev"
         subdomain = f"www.{domain_name}"
 
         domain_bucket = s3.Bucket(
@@ -82,7 +82,7 @@ class InfraStack(Stack):
             target=route53.RecordTarget.from_alias(route53_targets.CloudFrontTarget(distribution))
         )
 
-        my_email = "jennproos@gmail.com"
+        my_email = "jennrandall4855@gmail.com"
 
         ses.EmailIdentity(
             self,
